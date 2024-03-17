@@ -8,3 +8,8 @@ picocom /dev/ttyACM1 --baud 115200 --omap crcrlf --echo
 
 
 mavlink-routerd /dev/ttyACM1
+
+
+##
+# PICO Pinout
+

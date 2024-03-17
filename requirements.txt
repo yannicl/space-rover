@@ -1,0 +1,2 @@
+ujson == 5.9.0
+pyserial
