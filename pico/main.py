@@ -70,6 +70,7 @@ def sendImu():
     print(ujson.dumps(msg))
 
 def sendDistance() :
+    global tof
     tof.start()
     MAV_DISTANCE_SENSOR_LASER = 0
     MAV_FRAME_BODY_FRD = 12
@@ -82,6 +83,7 @@ def sendDistance() :
     print(ujson.dumps(msg))
 
 def sendBatteryStatus():
+    global ina
     msg = {
         "type": "BATTERY_STATUS",
         "voltages": ina.voltage(),
@@ -139,3 +141,4 @@ from machine import Timer
 
 tim = Timer(period=5000, mode=Timer.ONE_SHOT, callback=lambda t:print("init"))
 tim.init(period=100, mode=Timer.PERIODIC, callback=mainLoop)
+
