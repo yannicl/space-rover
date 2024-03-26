@@ -9,8 +9,8 @@ class Rover:
     def __init__(self) -> None:
         self.n = neopixel.NeoPixel(Pin(3), 4)
         self.failsafe = False
-        self.motorRF = PWM(Pin(8), freq=50, duty_u16=0)
-        self.motorRR = PWM(Pin(11), freq=50, duty_u16=0)
+        self.motorRF = PWM(Pin(11), freq=50, duty_u16=0)
+        self.motorRR = PWM(Pin(8), freq=50, duty_u16=0)
         self.motorLF = PWM(Pin(12), freq=50, duty_u16=0)
         self.motorLR = PWM(Pin(10), freq=50, duty_u16=0)
         return
