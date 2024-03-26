@@ -1,0 +1,4 @@
+mplayer -title t00 -nostop-xscreensaver -fps 15 -vo xv -xy 1200 -vf screenshot -demuxer h264es ffmpeg://tcp://192.168.0.128:5001
+
+raspivid -v -fps 15 -md 2 -n -mm spot -ih -t 0 -l -o tcp://0.0.0.0:5001
+
