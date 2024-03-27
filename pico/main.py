@@ -13,7 +13,10 @@ i = 0
 rover = Rover()
 
 i2c = I2C(1, scl=Pin(27), sda=Pin(26))
-sensor = MPU9250(i2c)
+try:
+    sensor = MPU9250(i2c)
+except:
+    print("[WARN] MPU sensor disabled")
 
 # Create a VL53L0X object
 tof = VL53L0X.VL53L0X(i2c)
@@ -51,23 +54,24 @@ def handleLineFromRPi(line):
 
 def sendImu():
     global sensor
-    acc = sensor.acceleration
-    gyro = sensor.gyro
-    mag = sensor.magnetic
-    msg = {
-        "type": "HIGHRES_IMU",
-        "xacc": acc[0],
-        "yacc": acc[1],
-        "zacc": acc[2],
-        "xgyro": gyro[0],
-        "ygyro": gyro[1],
-        "zgyro": gyro[2],
-        "xmag": mag[0],
-        "ymag": mag[1],
-        "zmag": mag[2],
-        "temperature": sensor.temperature
-    }
-    print(ujson.dumps(msg))
+    if sensor:
+        acc = sensor.acceleration
+        gyro = sensor.gyro
+        mag = sensor.magnetic
+        msg = {
+            "type": "HIGHRES_IMU",
+            "xacc": acc[0],
+            "yacc": acc[1],
+            "zacc": acc[2],
+            "xgyro": gyro[0],
+            "ygyro": gyro[1],
+            "zgyro": gyro[2],
+            "xmag": mag[0],
+            "ymag": mag[1],
+            "zmag": mag[2],
+            "temperature": sensor.temperature
+        }
+        print(ujson.dumps(msg))
 
 def sendDistance() :
     global tof
