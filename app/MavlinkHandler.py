@@ -1,13 +1,17 @@
 from pymavlink.dialects.v20.ardupilotmega import MAVLink_message
 from ConfigSrv import ConfigSrv
 from pymavlink import mavutil
+from PicoHandler import PicoHandler
 import time
 
 class MavlinkHandler:
 
     def __init__(self, confisrv: ConfigSrv):
         self.config = confisrv
-        self.mav = mavutil.mavlink_connection('tcp:127.0.0.1:5760')
+        self.mav = mavutil.mavlink_connection('tcp:192.168.0.195:5760')
+
+    def registerPicoHandler(self, picoHandler: PicoHandler):
+        self.picoHandler = picoHandler
 
     def handle(self, msg: MAVLink_message):
         print (msg.to_dict())
@@ -17,6 +21,10 @@ class MavlinkHandler:
             case "PARAM_VALUE":
                 self.config.updateParam(msg.param_id, msg.param_value)
                 return
+            case "RC_CHANNELS_SCALED":
+                self.picoHandler.sendCtrlCmd(msg.chan1_scaled, msg.chan2_scaled)
+                return
+
             
     def sendImu(self, data):
         # time_usec                 : Timestamp (UNIX Epoch time or time since system boot). The receiving end can infer timestamp format (since 1.1.1970 or since system boot) by checking for the magnitude of the number. [us] (type:uint64_t)
@@ -54,7 +62,12 @@ class MavlinkHandler:
         )
 
     def sendBatteryStatus(self, data):
-        pass
+        v = data['voltages']
+        r = int((v - (3 * 3.2)) / (3 * 4.2) * 100)
+        self.mav.mav.battery_status_send(battery_remaining=r)
+
+    def sendObstacleDistance(self, data):
+        self.mav.mav.obstacle_distance_send(frame=data['frame'], sensor_type=data['sensor_type'], distances=[data['distances']])
 
 
 if __name__ == '__main__':

@@ -11,6 +11,10 @@ server_socket = socket.socket()
 server_socket.bind(('0.0.0.0', 8000))
 server_socket.listen(0)
 
+# initialize the HOG descriptor/person detector
+hog = cv2.HOGDescriptor()
+hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
+
 # Accept a single connection and make a file-like object out of it
 connection = server_socket.accept()[0].makefile('rb')
 try:
@@ -34,8 +38,21 @@ try:
         #image.show('picamera')
         numpy_array = numpy.array(image)
         #print(numpy_array.shape)
-        opencvImage = cv2.cvtColor(numpy_array, cv2.COLOR_RGB2BGR)
-        cv2.imshow('picamera', opencvImage)
+        frame = cv2.cvtColor(numpy_array, cv2.COLOR_RGB2BGR)
+
+        # detect people in the image
+        # returns the bounding boxes for the detected objects
+        boxes, weights = hog.detectMultiScale(frame, winStride=(4,4) )
+
+        boxes = numpy.array([[x, y, x + w, y + h] for (x, y, w, h) in boxes])
+
+        for (xA, yA, xB, yB) in boxes:
+            # display the detected boxes in the colour picture
+            cv2.rectangle(frame, (xA, yA), (xB, yB),
+                            (0, 255, 0), 2)
+
+
+        cv2.imshow('picamera', frame)
         cv2.waitKey(1)
 finally:
     connection.close()

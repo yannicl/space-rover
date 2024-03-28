@@ -46,9 +46,5 @@ if __name__ == '__main__':
 
 # send gps every 15s
 
-# send modbus request
-
-# https://micropython-modbus.readthedocs.io/en/latest/EXAMPLES.html
-
 
 
