@@ -62,10 +62,24 @@ class MavlinkHandler:
     def sendBatteryStatus(self, data):
         v = data['voltages']
         r = int((v - (3 * 3.2)) / (3 * 4.2) * 100)
-        self.mav.mav.battery_status_send(battery_remaining=r)
+        """
+        Battery information
+
+        id                        : Battery ID (type:uint8_t)
+        battery_function          : Function of the battery (type:uint8_t, values:MAV_BATTERY_FUNCTION)
+        type                      : Type (chemistry) of the battery (type:uint8_t, values:MAV_BATTERY_TYPE)
+        temperature               : Temperature of the battery. INT16_MAX for unknown temperature. [cdegC] (type:int16_t)
+        voltages                  : Battery voltage of cells 1 to 10 (see voltages_ext for cells 11-14). Cells in this field above the valid cell count for this battery should have the UINT16_MAX value. If individual cell voltages are unknown or not measured for this battery, then the overall battery voltage should be filled in cell 0, with all others set to UINT16_MAX. If the voltage of the battery is greater than (UINT16_MAX - 1), then cell 0 should be set to (UINT16_MAX - 1), and cell 1 to the remaining voltage. This can be extended to multiple cells if the total voltage is greater than 2 * (UINT16_MAX - 1). [mV] (type:uint16_t)
+        current_battery           : Battery current, -1: autopilot does not measure the current [cA] (type:int16_t)
+        current_consumed          : Consumed charge, -1: autopilot does not provide consumption estimate [mAh] (type:int32_t)
+        energy_consumed           : Consumed energy, -1: autopilot does not provide energy consumption estimate [hJ] (type:int32_t)
+        battery_remaining         : Remaining battery energy. Values: [0-100], -1: autopilot does not estimate the remaining battery. [%] (type:int8_t)
+
+        """
+        self.mav.mav.battery_status_send(battery_function=1, type=1, temperature=32767, voltages=[v, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], current_battery=-1, current_consumed=-1, energy_consumed=-1, battery_remaining=r)
 
     def sendObstacleDistance(self, data):
-        self.mav.mav.rangefinder_send(voltage=0, distance=[data['distances']])
+        self.mav.mav.rangefinder_send(voltage=0.0, distance=data['distances'])
 
 
 if __name__ == '__main__':
