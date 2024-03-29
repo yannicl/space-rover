@@ -25,7 +25,7 @@ class Tasks:
 
     def sendHeartbeatToPico(self):
         self.s.enter(float(self.config.getValue("pico_hearbeat_rate_ms")) / 1000, self.NORMAL_PRIORITY, self.sendHeartbeatToPico)
-        self.picoHandler.heartbeat()
+        self.picoHandler.sendHeartbeat()
 
     def picoHandlerRead(self):
         self.s.enter(100 / 1000, self.NORMAL_PRIORITY, self.picoHandlerRead)

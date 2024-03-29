@@ -12,7 +12,7 @@ class PicoHandler:
         self.mavlink.registerPicoHandler(self)
     
     def sendHeartbeat(self):
-        msg = bytes("{\"type\":\"HEARTBEAT\"}", 'utf-8')
+        msg = {"type":"HEARTBEAT"}
         self.sendGenericMessage(msg)
 
     def sendCtrlCmd(self, motorA, motorB):
@@ -24,11 +24,9 @@ class PicoHandler:
         self.sendGenericMessage(msg)
         
     def sendGenericMessage(self, msg):
-        global ser
         cmd = "handleLineFromRPi(\"" + ujson.dumps(msg).replace('"','\\\"') + "\")"
-        self.sendGenericCommands(cmd)
-        ser.write(cmd.encode("utf-8"))
-        ser.write( b'\x04' )
+        self.ser.write(cmd.encode("utf-8"))
+        self.ser.write( b'\x04' )
 
     def readAndHandle(self):
         line = self.ser.readline()
@@ -42,9 +40,9 @@ class PicoHandler:
             print(data)
             if (data['type'] == "HIGHRES_IMU"):
                 self.mavlink.sendImu(data)
-            if (data.type == "BATTERY_STATUS"):
+            if (data['type'] == "BATTERY_STATUS"):
                 self.mavlink.sendBatteryStatus(data)
-            if (data.typ == "OBSTACLE_DISTANCE"):
+            if (data['type'] == "OBSTACLE_DISTANCE"):
                 self.mavlink.sendObstacleDistance(data)
         except Exception as inst:
             print(inst)

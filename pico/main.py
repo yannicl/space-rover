@@ -43,12 +43,13 @@ class WDT:
 wdt = WDT(rover)
 
 def handleLineFromRPi(line):
+    global wdt
     try:
         l = ujson.loads(line)
         if(l['type'] == "RC_CHANNELS_SCALED"):
             rover.handleCtrlCmd(l['chan1_scaled'], l['chan2_scaled'])
         if(l['type'] == "HEARTBEAT"):
-            wdt.wdtFeed()
+            wdt.feed()
     except ValueError:
         pass
 

@@ -1,7 +1,6 @@
 from pymavlink.dialects.v20.ardupilotmega import MAVLink_message
 from ConfigSrv import ConfigSrv
 from pymavlink import mavutil
-from PicoHandler import PicoHandler
 import time
 
 class MavlinkHandler:
@@ -10,7 +9,7 @@ class MavlinkHandler:
         self.config = confisrv
         self.mav = mavutil.mavlink_connection('tcp:192.168.0.195:5760')
 
-    def registerPicoHandler(self, picoHandler: PicoHandler):
+    def registerPicoHandler(self, picoHandler):
         self.picoHandler = picoHandler
 
     def handle(self, msg: MAVLink_message):
