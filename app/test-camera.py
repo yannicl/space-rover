@@ -32,12 +32,13 @@ try:
         # Rewind the stream and send the image data over the wire
         stream.seek(0)
         connection.write(stream.read())
-        # If we've been capturing for more than 30 seconds, quit
-        if time.time() - start > 30:
+        # If we've been capturing for more than 3000 seconds, quit
+        if time.time() - start > 3000:
             break
         # Reset the stream for the next capture
         stream.seek(0)
         stream.truncate()
+        time.sleep(1)
     # Write a length of zero to the stream to signal we're done
     connection.write(struct.pack('<L', 0))
 finally:
