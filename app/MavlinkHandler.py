@@ -15,15 +15,14 @@ class MavlinkHandler:
 
     def handle(self, msg: MAVLink_message):
         print (msg.to_dict())
-        match(msg.get_type()):
-            case "HEARTBEAT":
-                return
-            case "PARAM_VALUE":
-                self.config.updateParam(msg.param_id, msg.param_value)
-                return
-            case "RC_CHANNELS_SCALED":
-                self.picoHandler.sendCtrlCmd(msg.chan1_scaled, msg.chan2_scaled)
-                return
+        if (msg.get_type() == "HEARTBEAT"):
+            return
+        elif(msg.get_type() == "PARAM_VALUE"):
+            self.config.updateParam(msg.param_id, msg.param_value)
+            return
+        elif(msg.get_type() == "RC_CHANNELS_SCALED"):
+            self.picoHandler.sendCtrlCmd(msg.chan1_scaled, msg.chan2_scaled)
+            return
 
             
     def sendImu(self, data):
