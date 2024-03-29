@@ -2,3 +2,4 @@ ujson
 pyserial
 pynput
 Pillow
+pymavlink
