@@ -65,7 +65,7 @@ class MavlinkHandler:
         self.mav.mav.battery_status_send(battery_remaining=r)
 
     def sendObstacleDistance(self, data):
-        self.mav.mav.obstacle_distance_send(frame=data['frame'], sensor_type=data['sensor_type'], distances=[data['distances']])
+        self.mav.mav.rangefinder_send(voltage=0, distance=[data['distances']])
 
 
 if __name__ == '__main__':
