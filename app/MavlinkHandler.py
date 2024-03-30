@@ -12,6 +12,7 @@ class MavlinkHandler:
     def registerPicoHandler(self, picoHandler):
         self.picoHandler = picoHandler
 
+    # this is not yet called
     def handle(self, msg: MAVLink_message):
         print (msg.to_dict())
         if (msg.get_type() == "HEARTBEAT"):
@@ -20,8 +21,15 @@ class MavlinkHandler:
             self.config.updateParam(msg.param_id, msg.param_value)
             return
         elif(msg.get_type() == "RC_CHANNELS_SCALED"):
-            self.picoHandler.sendCtrlCmd(msg.chan1_scaled, msg.chan2_scaled)
+            if (self.picoHandler is not None):
+                self.picoHandler.sendCtrlCmd(msg.chan1_scaled, msg.chan2_scaled)
             return
+        
+    def listen(self):
+        while True:
+            msg = self.mav.recv_match(blocking=True)
+            if (msg) :
+                self.handle(msg)
 
             
     def sendImu(self, data):
@@ -61,7 +69,8 @@ class MavlinkHandler:
 
     def sendBatteryStatus(self, data):
         v = data['voltages']
-        r = int((v - (3 * 3.2)) / (3 * 4.2) * 100)
+        # battery cell goes from 3.2 to 4.2v
+        r = int((v - (3 * 3.2)) / (3) * 100)
         """
         Battery information
 
@@ -76,7 +85,7 @@ class MavlinkHandler:
         battery_remaining         : Remaining battery energy. Values: [0-100], -1: autopilot does not estimate the remaining battery. [%] (type:int8_t)
 
         """
-        self.mav.mav.battery_status_send(battery_function=1, type=1, temperature=32767, voltages=[v, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], current_battery=-1, current_consumed=-1, energy_consumed=-1, battery_remaining=r)
+        self.mav.mav.battery_status_send(id=1,battery_function=1, type=1, temperature=32767, voltages=[int(v * 1000), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], current_battery=-1, current_consumed=-1, energy_consumed=-1, battery_remaining=r)
 
     def sendObstacleDistance(self, data):
         self.mav.mav.rangefinder_send(voltage=0.0, distance=data['distances'])

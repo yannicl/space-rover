@@ -2,6 +2,7 @@ import sched, time
 from ConfigSrv import ConfigSrv
 from PicoHandler import PicoHandler
 from MavlinkHandler import MavlinkHandler
+from threading import Thread
 
 class Tasks:
 
@@ -39,8 +40,11 @@ if __name__ == '__main__':
     srv = ConfigSrv()
     tasks = Tasks(srv)
     ph = PicoHandler()
-    ph.registerMavlinkHandler(MavlinkHandler(srv))
+    mav = MavlinkHandler(srv)
+    ph.registerMavlinkHandler(mav)
     tasks.registerPicoHandler(ph)
+    t1 = Thread(target=mav.listen)
+    t1.start()
     tasks.run()
 
 

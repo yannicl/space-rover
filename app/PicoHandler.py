@@ -35,6 +35,8 @@ class PicoHandler:
     
     def handle(self, line):
         print(line)
+        start = line.find('{')
+        line = line[start:]
         try:
             data = ujson.loads(line)
             print(data)
